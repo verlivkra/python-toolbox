@@ -97,7 +97,7 @@ def readOperatingPoints(OP_file):
       - RotorSpeed_[rpm], WindSpeed_[m/s], PitchAngle_[deg], GeneratorTorque_[Nm], Filename_[-]
 
     """
-    OP=pd.read_csv(OP_file);
+    OP=pd.read_csv(OP_file, sep=';');
     for c in OP.columns:
         if c.lower().find('kn-m')>1 or c.lower().find('knm')>1:
             OP[c]*=1000
