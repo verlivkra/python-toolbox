@@ -166,7 +166,6 @@ def postproMBC(xlsFile=None, csvModesIDFile=None, xlssheet=None, verbose=True, W
         Points=dict()
         for i,v in enumerate(WS):
             OPFile = csvBase+'Campbell_Point{:02d}{:}.csv'.format(i+1,suffix)
-            #print(OPFile, WS[i], RPM[i])
             Points[i] = pd.read_csv(OPFile, sep = ',', header=None)
     else:
         raise Exception('Provide either an Excel file or a csv (ModesID) file')
@@ -355,6 +354,114 @@ def campbellModeStyles(i, lbl):
         mk=''; 
     return c, ls, ms, mk
 
+def campbellModeStylesNTNU(i, lbl, twosims = False, cno = 0):
+    """ """
+    import matplotlib.pyplot as plt
+    FullLineStyles = [':', '-', '-+', '-o', '-^', '-s', '--x', '--d', '-.', '-v', '-+', ':o', ':^', ':s', ':x', ':d', ':.', '--','--+','--o','--^','--s','--x','--d','--.'];
+    Markers    = ['', '+', 'o', '^', 's', 'd', 'x', '.']
+    LineStyles = ['-', ':', '-.', '--'];
+    Colors = plt.rcParams['axes.prop_cycle'].by_key()['color']
+    MW_LightLight_Blue    = np.array([207,218,241])/255.
+    MW_Light_Blue    = np.array([157,183,225])/255.
+    MW_Blue     =     np.array([96,150,208])/255.
+    MW_Dark_Blue     =     np.array([62,98,138])/255.
+
+    MW_Light_Orange  = np.array([244,172,103])/255.
+    MW_Light_Green   = np.array([213,223,124])/255.
+    MW_LightLight_Green   = np.array([235,240,196])/255.
+    MW_Light_Pink     = np.array([200,113,172])/255.
+    MW_Light_Gray    = np.array([128,133,133])/255.
+    MW_Light_Purple  = np.array([127,97,156])/255.
+    MW_Light_Teal = np.array([151,210,212])/255.
+    MW_Light_Yellow    = np.array([251,223,123])/255.
+    MW_Orange   =     np.array([239,129,20])/255.
+    MW_Green    =     np.array([124,137,52])/255.
+    MW_Pink      =     np.array([176,27,129])/255.
+    MW_Gray     =     np.array([83,81,84])/255.
+    MW_Purple   =     np.array([72,39,118])/255.
+    MW_Teal  =     np.array([68,186,190])/255.
+    MW_Dark_Teal  =     np.array([46,117,120])/255.
+    MW_Yellow     =     np.array([247,208,25])/255.
+
+    lbl=lbl.lower().replace('_',' ')
+    ms = 4
+    c  = Colors[np.mod(i,len(Colors))]
+    ls = LineStyles[np.mod(int(i/len(Markers)),len(LineStyles))]
+    mk = Markers[np.mod(i,len(Markers))]
+    # Color
+    if twosims:
+        if any([s in lbl for s in ['1st tower']]):
+            if cno == 0:
+                c=MW_Blue
+            elif cno == 1:
+                c=MW_Pink
+        elif any([s in lbl for s in ['2nd tower']]):
+            if cno == 0:
+                c=MW_Blue
+            elif cno == 1:
+                c=MW_Pink
+        elif any([s in lbl for s in ['1st blade edge','drivetrain']]):
+            if cno == 0:
+                c=MW_Blue
+            elif cno == 1:
+                c=MW_Pink
+        elif any([s in lbl for s in ['1st blade flap']]):
+            if cno == 0:
+                c=MW_Blue
+            elif cno == 1:
+                c=MW_Pink
+        elif any([s in lbl for s in ['2nd blade flap']]):
+            if cno == 0:
+                c=MW_Blue
+            elif cno == 1:
+                c=MW_Pink
+        elif any([s in lbl for s in ['3rd blade flap']]):
+            if cno == 0:
+                c=MW_Blue
+            elif cno == 1:
+                c=MW_Pink
+        elif any([s in lbl for s in ['2nd blade edge']]):
+            if cno == 0:
+                c=MW_Blue
+            elif cno == 1:
+                c=MW_Pink
+        elif any([s in lbl for s in ['1st blade torsion']]):
+            if cno == 0:
+                c=MW_Blue
+            elif cno == 1:
+                c=MW_Pink
+    else:
+        if any([s in lbl for s in ['1st tower']]):
+            c=MW_Blue
+        elif any([s in lbl for s in ['2nd tower']]):
+            c=MW_Light_Blue
+        elif any([s in lbl for s in ['1st blade edge','drivetrain']]):
+            c=MW_Pink
+        elif any([s in lbl for s in ['1st blade flap']]):
+            c=MW_Dark_Teal
+        elif any([s in lbl for s in ['2nd blade flap']]):
+            c=MW_Teal
+        elif any([s in lbl for s in ['3rd blade flap']]):
+            c=MW_LightLight_Green
+        elif any([s in lbl for s in ['2nd blade edge']]):
+            c=MW_Light_Pink
+        elif any([s in lbl for s in ['1st blade torsion']]):
+            c=MW_Purple
+
+    # Line style
+    if any([s in lbl for s in ['tower fa','collective','drivetrain','coll']]):
+        ls='-'
+    elif any([s in lbl for s in ['tower ss','regressive','bw']]):
+        ls='--'
+    elif any([s in lbl for s in ['tower ss','progressive','fw']]):
+        ls='-.'
+    # Marker
+    if any([s in lbl for s in ['collective','coll']]):
+        mk='2'; ms=8
+    elif any([s in lbl for s in ['blade','tower','drivetrain']]):
+        mk=''; 
+    return c, ls, ms, mk
+
 def plotCampbell(OP, Freq, Damp, sx='WS_[m/s]', UnMapped=None, fig=None, axes=None, ylim=None, legend=True, plotUnMapped=True, ps=[1,3,6,9]):
     """ Plot Campbell data as returned by postproMBC 
 
@@ -370,7 +477,6 @@ def plotCampbell(OP, Freq, Damp, sx='WS_[m/s]', UnMapped=None, fig=None, axes=No
       - ps: multiple of "p" (rotational speed) to plot in the background
     """
     import matplotlib.pyplot as plt
-
 
     # Init figure
     if fig is None:
@@ -441,6 +547,271 @@ def plotCampbell(OP, Freq, Damp, sx='WS_[m/s]', UnMapped=None, fig=None, axes=No
         axes[1].set_ylim(DampRange)
     return fig, axes
 
+def plotCampbellFrequencies(OP, Freq, fig, axes, axno, subTitle, sx='WS_[m/s]', UnMapped=None, ylim=None, legend=True, plotUnMapped=True, ps=[1,3,6,9]):
+    """ Plot Campbell data as returned by postproMBC 
+
+    INPUTS:
+      - OP : dataframe of operating points (as returned by postMBC)
+      - Freq : dataframe of Frequencies at each OP (as returned by postMBC)
+      - sx: label of the dataframes used for the "x" axis of the Campbell plot
+      - fig, axes: fig and axes used for plotting (freq and damp)
+      - axno: index of axis to plot on
+    OPTIONAL INPUTS:
+      - UnMapped: dataframe of UnMapped modes
+      - ylim: limits for the frequency axis
+      - ps: multiple of "p" (rotational speed) to plot in the background
+    """
+    import matplotlib.pyplot as plt
+
+
+    # Init figure
+    if fig is None:
+        fig,axes_ = plt.subplots(1,2)
+        # fig.set_size_inches(7,7.0,forward=True) # default is (6.4,4.8)
+        fig.set_size_inches(13,7.0,forward=True) # default is (6.4,4.8)
+        fig.subplots_adjust(top=0.78,bottom=0.11,left=0.04,right=0.98,hspace=0.06,wspace=0.16)
+    # if axes is None:
+        axes=axes_
+
+    # Estimating figure range
+    FreqRange = [0                         , np.nanmax(Freq.values)*1.01]
+
+    if ylim is not None:
+        FreqRange=ylim
+
+    # Plot "background" 1p 3p 6p 9p. Potentiallymake this an option
+    RPM     = OP['RotSpeed_[rpm]'].values
+    omega   = RPM/60*2*np.pi
+    freq_1p = omega/(2*np.pi)
+    for p in ps:
+        axes[axno].plot(OP[sx].values,  p*freq_1p, ':', color=(0.7,0.7,0.7), lw=1.0)
+
+    # Plot mapped modes
+    Markers = ['+', 'o', '^', 's', 'd', 'x', '.']
+    iModeValid=0
+    xPlot=[]; yPlot=[]
+    for iMode,lbl in enumerate(Freq.columns.values):
+        if lbl.find('not_shown')>0:
+            # TODO ADD TO UNMAPPED
+            continue
+        iModeValid+=1
+        c, ls, ms, mk = campbellModeStylesNTNU(iModeValid, lbl, colno = axno)
+        if len(RPM)==1 and len(mk)==0:
+            mk = Markers[np.mod(iMode,len(Markers))]
+            ms=5
+        axes[axno].plot(OP[sx].values, Freq[lbl].values, ls, marker=mk, label=lbl.replace('_',' '), markersize=ms, color=c)
+        xPlot=np.concatenate((xPlot, OP[sx].values))
+        yPlot=np.concatenate((yPlot, Freq[lbl].values))
+
+    # Unmapped modes (NOTE: plotted after to over-plot)
+    if plotUnMapped and UnMapped is not None:
+        axes[axno].plot(UnMapped[sx].values, UnMapped['Freq_[Hz]'  ].values, '.', markersize=2, color=[0.5,0.5,0.5])
+    # Highligh duplicates (also after)
+    Points=[(x,y) for x,y in zip(xPlot,yPlot)]
+    Plot = pd.Series(Points)
+    for xDupl,yDupl in Plot[Plot.duplicated()]:
+        axes[0].plot(xDupl,yDupl, 'o',color='r')
+
+    axes[axno].set_xlabel(sx.replace('_',' '))
+    axes[axno].set_ylabel('Frequencies [Hz]')
+    axes[axno].set_title(subTitle)
+    if axno < 1: 
+        legend = True
+    else: 
+        legend = False
+        
+    if legend:
+        # axes[axno].legend(bbox_to_anchor=(0., 1.02, 2.16, .802), loc='lower left', ncol=4, mode="expand", borderaxespad=0.)
+        axes[axno].legend(bbox_to_anchor=(0., -0.35, 2.16, .802), loc='lower left', ncol=4, mode="expand", borderaxespad=0.)
+    if not np.any(np.isnan(FreqRange)):
+        axes[axno].set_ylim(FreqRange)
+    
+    return fig, axes
+
+def plotCampbellFrequenciesSingle(OP, Freq, fig, axes, axno, subTitle, sx='WS_[m/s]', UnMapped=None, ylim=None, legend=True, plotUnMapped=True, ps=[1,3,6,9], select_modes = "All", custom_legends = {}):
+    """ Plot Campbell data as returned by postproMBC 
+
+    INPUTS:
+      - OP : dataframe of operating points (as returned by postMBC)
+      - Freq : dataframe of Frequencies at each OP (as returned by postMBC)
+      - sx: label of the dataframes used for the "x" axis of the Campbell plot
+      - fig, axes: fig and axes used for plotting (freq and damp)
+      - axno: index of axis to plot on
+    OPTIONAL INPUTS:
+      - UnMapped: dataframe of UnMapped modes
+      - ylim: limits for the frequency axis
+      - ps: multiple of "p" (rotational speed) to plot in the background
+    """
+    import matplotlib.pyplot as plt
+    from matplotlib.lines import Line2D 
+
+    # Init figure
+    if fig is None:
+        fig,axes_ = plt.subplots()
+        # fig.set_size_inches(7,7.0,forward=True) # default is (6.4,4.8)
+        fig.set_size_inches(13,7.0,forward=True) # default is (6.4,4.8)
+        fig.subplots_adjust(top=0.78,bottom=0.11,left=0.04,right=0.98,hspace=0.06,wspace=0.16)
+    if axes is None:
+        axes=axes_
+
+    # Estimating figure range
+    FreqRange = [0                         , np.nanmax(Freq.values)*1.01]
+
+    if ylim is not None:
+        FreqRange=ylim
+
+    # Plot "background" 1p 3p 6p 9p. Potentiallymake this an option
+    RPM     = OP['RotSpeed_[rpm]'].values
+    omega   = RPM/60*2*np.pi
+    freq_1p = omega/(2*np.pi)
+    if axno == 0:
+        for p in ps:
+            axes.plot(OP[sx].values,  p*freq_1p, ':', color=(0.7,0.7,0.7), lw=1.0)
+
+    # Plot mapped modes
+    Markers = ['+', 'o', '^', 's', 'd', 'x', '.']
+    iModeValid=0
+    xPlot=[]; yPlot=[]
+    for iMode,lbl in enumerate(Freq.columns.values):
+        if lbl.find('not_shown')>0:
+            # TODO ADD TO UNMAPPED
+            continue
+        lbl_space=lbl.replace('_',' ')
+        if any([s in lbl_space for s in select_modes]) or select_modes == "All":
+            iModeValid+=1
+            c, ls, ms, mk = campbellModeStylesNTNU(iModeValid, lbl, twosims = True, cno = axno)
+            if len(RPM)==1 and len(mk)==0:
+                mk = Markers[np.mod(iMode,len(Markers))]
+                ms=5
+            axes.plot(OP[sx].values, Freq[lbl].values, ls, marker=mk, markersize=ms, color=c)
+            # axes.plot(OP[sx].values, Freq[lbl].values, ls, marker=mk, label=lbl_space, markersize=ms, color=c)
+            xPlot=np.concatenate((xPlot, OP[sx].values))
+            yPlot=np.concatenate((yPlot, Freq[lbl].values))
+            if lbl_space not in custom_legends['mode']['label']:
+                custom_legends['mode']['mk'].append(mk)
+                custom_legends['mode']['ls'].append(ls)
+                custom_legends['mode']['label'].append(lbl_space)
+            if subTitle not in custom_legends['model']['label']:
+                custom_legends['model']['color'].append(c)
+                custom_legends['model']['label'].append(subTitle)
+
+    # Unmapped modes (NOTE: plotted after to over-plot)
+    if plotUnMapped and UnMapped is not None:
+        axes.plot(UnMapped[sx].values, UnMapped['Freq_[Hz]'  ].values, '.', markersize=2, color=[0.5,0.5,0.5])
+    # Highligh duplicates (also after)
+    Points=[(x,y) for x,y in zip(xPlot,yPlot)]
+    Plot = pd.Series(Points)
+    for xDupl,yDupl in Plot[Plot.duplicated()]:
+        axes.plot(xDupl,yDupl, 'o',color='r')
+
+    axes.set_xlabel(sx.replace('_',' '))
+    axes.set_ylabel('Frequencies [Hz]')
+    # axes.set_title(subTitle)
+    # if axno < 1 and legend: 
+    #     legend = True
+    # else: 
+    #     legend = False
+    
+
+
+    # if legend:
+    #     # axes[axno].legend(bbox_to_anchor=(0., 1.02, 2.16, .802), loc='lower left', ncol=4, mode="expand", borderaxespad=0.)
+    #     axes.legend(bbox_to_anchor=(0., -0.35, 1, .802), loc='lower left', ncol=4, mode="expand", borderaxespad=0.)
+
+    if not np.any(np.isnan(FreqRange)):
+        axes.set_ylim(FreqRange)
+    
+    return fig, axes, custom_legends
+
+def plotCampbellDamping(OP, Freq, Damp, fig, axes, axno, subTitle, sx='WS_[m/s]', UnMapped=None, ylim=None, legend=True, plotUnMapped=True):
+    """ Plot Campbell data as returned by postproMBC 
+
+    INPUTS:
+      - OP : dataframe of operating points (as returned by postMBC)
+      - Freq : dataframe of Frequencies at each OP (as returned by postMBC)
+      - OP : dataframe of damping ratios at each OP points (as returned by postMBC)
+      - sx: label of the dataframes used for the "x" axis of the Campbell plot
+    OPTIONAL INPUTS:
+      - UnMapped: dataframe of UnMapped modes
+      - fig, axes: optional fig and axes used for plotting (freq and damp)
+      - ylim: limits for the frequency axis
+      - ps: multiple of "p" (rotational speed) to plot in the background
+    """
+    import matplotlib.pyplot as plt
+
+
+    # Init figure
+    if fig is None:
+        fig,axes_ = plt.subplots(1,2)
+        # fig.set_size_inches(7,7.0,forward=True) # default is (6.4,4.8)
+        fig.set_size_inches(13,7.0,forward=True) # default is (6.4,4.8)
+        fig.subplots_adjust(top=0.78,bottom=0.11,left=0.04,right=0.98,hspace=0.06,wspace=0.16)
+    # if axes is None:
+        axes=axes_
+
+    # Estimating figure range
+    FreqRange = [0                         , np.nanmax(Freq.values)*1.01]
+    DampRange = [np.nanmin(Damp.iloc[:,2:]), np.nanmax(Damp.values)*1.01]
+
+    if ylim is not None:
+        DampRange=ylim
+    elif DampRange[0]>0:
+        DampRange[0]=0
+
+    # Plot "background" 1p 3p 6p 9p. Potentiallymake this an option
+    RPM     = OP['RotSpeed_[rpm]'].values
+    omega   = RPM/60*2*np.pi
+    freq_1p = omega/(2*np.pi)
+    # for p in ps:
+    #     axes[axno].plot(OP[sx].values,  p*freq_1p, ':',color=(0.7,0.7,0.7), lw=1.0)
+
+    # Plot mapped modes
+    Markers = ['+', 'o', '^', 's', 'd', 'x', '.']
+    iModeValid=0
+    xPlot=[]; yPlot=[]
+    for iMode,lbl in enumerate(Freq.columns.values):
+        if lbl.find('not_shown')>0:
+            # TODO ADD TO UNMAPPED
+            continue
+        iModeValid+=1
+        c, ls, ms, mk = campbellModeStylesNTNU(iModeValid, lbl)
+        if len(RPM)==1 and len(mk)==0:
+            mk = Markers[np.mod(iMode,len(Markers))]
+            ms=5
+        # axes[0].plot(OP[sx].values, Freq[lbl].values, ls, marker=mk, label=lbl.replace('_',' '), markersize=ms, color=c)
+        axes[axno].plot(OP[sx].values, Damp[lbl].values, ls, marker=mk, label=lbl.replace('_',' '), markersize=ms, color=c)
+        xPlot=np.concatenate((xPlot, OP[sx].values))
+        yPlot=np.concatenate((yPlot, Freq[lbl].values))
+
+    # Unmapped modes (NOTE: plotted after to over-plot)
+    if plotUnMapped and UnMapped is not None:
+        # axes[0].plot(UnMapped[sx].values, UnMapped['Freq_[Hz]'  ].values, '.', markersize=2, color=[0.5,0.5,0.5])
+        axes[axno].plot(UnMapped[sx].values, UnMapped['Damping_[-]'].values, '.', markersize=1, color=[0.5,0.5,0.5])
+    # Highligh duplicates (also after)
+    Points=[(x,y) for x,y in zip(xPlot,yPlot)]
+    Plot = pd.Series(Points)
+    for xDupl,yDupl in Plot[Plot.duplicated()]:
+        axes[0].plot(xDupl,yDupl, 'o',color='r')
+
+    axes[axno].set_xlabel(sx.replace('_',' '))
+    axes[axno].set_ylabel('Damping ratios [-]')
+    axes[axno].set_title(subTitle)
+    if axno < 1: 
+        legend = True
+    else: 
+        legend = False
+
+    if legend:
+        axes[axno].legend(bbox_to_anchor=(0., -0.35, 2.16, .802), loc='lower left', ncol=4, mode="expand", borderaxespad=0.)
+    # if not np.any(np.isnan(FreqRange)):
+    #     axes[axno].set_ylim(FreqRange)
+    
+    XLIM=axes[axno].get_xlim()
+    axes[axno].plot(XLIM, [0,0],'-', color='k', lw=0.5)
+    axes[axno].set_xlim(XLIM)
+    if not np.any(np.isnan(DampRange)):
+        axes[axno].set_ylim(DampRange)
+    return fig, axes
 
 def plotCampbellDataFile(xls_or_csv, ws_or_rpm='rpm', sheetname=None, ylim=None, WS_legacy=None, to_csv=False, suffix='', returnData=False, 
         fig=None, axes=None, legend=True, plotUnMapped=True, ps=[1,3,6,9]):
@@ -469,7 +840,7 @@ def plotCampbellDataFile(xls_or_csv, ws_or_rpm='rpm', sheetname=None, ylim=None,
         OP, Freq, Damp, UnMapped, ModeData =  postproMBC(csvModesIDFile=xls_or_csv, WS_legacy=WS_legacy, suffix=suffix)
 
         pass
-
+    
     else:
         raise Exception('Extension should be csv or xlsx, got {} instead.'.format(ext),)
 
@@ -487,3 +858,96 @@ def plotCampbellDataFile(xls_or_csv, ws_or_rpm='rpm', sheetname=None, ylim=None,
     else:
         return fig, axes, figName
 
+
+def plotCampbellDataFileFreq(xls_or_csv, fig, axes, axno, subTitle, ws_or_rpm='rpm', sheetname=None, ylim=None, WS_legacy=None, to_csv=False, suffix='', returnData=False, 
+        legend=True, plotUnMapped=True, ps=[1,3,6,9], single_plot = False, select_modes = "All", custom_legends = None):
+    """ 
+    Wrapper for plotCampbell, takes an Excel or csv file as argument. Returns a figure.
+
+    INPUTS:
+
+
+      - WS_legacy: for OpenFAST 2.3, wind speed is unknown (NaN), a vector of operating point WS is needed
+    """
+    if ws_or_rpm.lower()=='ws':
+        sx='WS_[m/s]'
+    else:
+        sx='RotSpeed_[rpm]'
+
+    ext     = os.path.splitext(xls_or_csv)[1].lower()
+    baseDir = os.path.dirname(xls_or_csv)
+    basename = os.path.splitext(os.path.basename(xls_or_csv))[0]
+
+    # --- Read xlsx or csv filse
+    if ext=='.xlsx':
+        OP, Freq, Damp, UnMapped, ModeData =  postproMBC(xlsFile=xls_or_csv,xlssheet=sheetname, WS_legacy=WS_legacy, suffix=suffix)
+
+    elif ext=='.csv':
+        OP, Freq, Damp, UnMapped, ModeData =  postproMBC(csvModesIDFile=xls_or_csv, WS_legacy=WS_legacy, suffix=suffix)
+
+        pass
+    
+    else:
+        raise Exception('Extension should be csv or xlsx, got {} instead.'.format(ext),)
+
+    # --- Plot
+    if single_plot:
+        fig, axes, custom_legends = plotCampbellFrequenciesSingle(OP, Freq, fig, axes, axno, subTitle, sx=sx, UnMapped=UnMapped, ylim=ylim, legend=legend, plotUnMapped=plotUnMapped, ps=ps, select_modes = select_modes, custom_legends = custom_legends)
+    else:
+        fig, axes = plotCampbellFrequencies(OP, Freq, fig, axes, axno, subTitle, sx=sx, UnMapped=UnMapped, ylim=ylim, legend=legend, plotUnMapped=plotUnMapped, ps=ps)
+    figName = os.path.join(baseDir,basename+'_'+ws_or_rpm)
+
+    if to_csv:
+        Freq.to_csv(os.path.join(baseDir, 'freq.csv'), index=None, sep=' ', na_rep='NaN')
+        Damp.to_csv(os.path.join(baseDir, 'damp.csv'), index=None, sep=' ', na_rep='NaN')
+        OP.to_csv(os.path.join(baseDir, 'op.csv'), index=None, sep=' ', na_rep='NaN')
+
+    if returnData:
+        return fig, axes, figName, OP, Freq, Damp
+    else:
+        return fig, axes, figName, custom_legends
+
+def plotCampbellDataFileDamp(xls_or_csv, fig, axes, axno, subTitle, ws_or_rpm='rpm', sheetname=None, ylim=None, WS_legacy=None, to_csv=False, suffix='', returnData=False, 
+        legend=True, plotUnMapped=True):
+    """ 
+    Wrapper for plotCampbell, takes an Excel or csv file as argument. Returns a figure.
+
+    INPUTS:
+
+
+      - WS_legacy: for OpenFAST 2.3, wind speed is unknown (NaN), a vector of operating point WS is needed
+    """
+    if ws_or_rpm.lower()=='ws':
+        sx='WS_[m/s]'
+    else:
+        sx='RotSpeed_[rpm]'
+
+    ext     = os.path.splitext(xls_or_csv)[1].lower()
+    baseDir = os.path.dirname(xls_or_csv)
+    basename = os.path.splitext(os.path.basename(xls_or_csv))[0]
+
+    # --- Read xlsx or csv filse
+    if ext=='.xlsx':
+        OP, Freq, Damp, UnMapped, ModeData =  postproMBC(xlsFile=xls_or_csv,xlssheet=sheetname, WS_legacy=WS_legacy, suffix=suffix)
+
+    elif ext=='.csv':
+        OP, Freq, Damp, UnMapped, ModeData =  postproMBC(csvModesIDFile=xls_or_csv, WS_legacy=WS_legacy, suffix=suffix)
+
+        pass
+    
+    else:
+        raise Exception('Extension should be csv or xlsx, got {} instead.'.format(ext),)
+
+    # --- Plot
+    fig, axes = plotCampbellDamping(OP, Freq, Damp, fig, axes, axno, subTitle, sx=sx, UnMapped=UnMapped, ylim=ylim, legend=legend, plotUnMapped=plotUnMapped)
+    figName = os.path.join(baseDir,basename+'_'+ws_or_rpm)
+
+    if to_csv:
+        Freq.to_csv(os.path.join(baseDir, 'freq.csv'), index=None, sep=' ', na_rep='NaN')
+        Damp.to_csv(os.path.join(baseDir, 'damp.csv'), index=None, sep=' ', na_rep='NaN')
+        OP.to_csv(os.path.join(baseDir, 'op.csv'), index=None, sep=' ', na_rep='NaN')
+
+    if returnData:
+        return fig, axes, figName, OP, Freq, Damp
+    else:
+        return fig, axes, figName
