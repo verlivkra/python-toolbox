@@ -193,7 +193,7 @@ def printCampbellDataOP(CDDOP, nModesMax=15, nCharMaxDesc=50) :
         Mode = CDDOP['Modes'][i]
         # Extracting description the best we can
         Desc = extractShortModeDescription(Mode)
-        print('{:3d} ,{:12.3f}, {:8.5f}       , {:7.4f},  {:s}'.format(i+1,Mode['NaturalFreq_Hz'],Mode['DampingRatio'],Mode['DampingRatio']*100*2*np.pi, Desc[:min(nCharMaxDesc,len(Desc))]))
+        print('{:5d} ,{:12.5f}, {:8.5f}       , {:7.5f},  {:s}'.format(i+1,Mode['NaturalFreq_Hz'],Mode['DampingRatio'],Mode['DampingRatio']*100*2*np.pi, Desc[:min(nCharMaxDesc,len(Desc))]))
     return Freq, Damp
 
 
