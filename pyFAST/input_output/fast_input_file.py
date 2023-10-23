@@ -351,12 +351,26 @@ class FASTInputFileBase(File):
 
         # --- Tables that can be detected based on the "Label" (second entry on line)
         # NOTE: MJointID1, used by SubDyn and HydroDyn
-        NUMTAB_FROM_LAB_DETECT   = ['NumAlf'  , 'F_X'       , 'MemberCd1'    , 'MJointID1' , 'NOutLoc'    , 'NOutCnt'    , 'PropD'       ,'Diam'       ,'Type'           ,'LineType' ]
-        NUMTAB_FROM_LAB_DIM_VAR  = ['NumAlf'  , 'NKInpSt'   , 'NCoefMembers' , 'NMembers'  , 'NMOutputs'  , 'NMOutputs'  , 'NPropSets'   ,'NTypes'     ,'NConnects'      ,'NLines'   ]
-        NUMTAB_FROM_LAB_VARNAME  = ['AFCoeff' , 'TMDspProp' , 'MemberProp'   , 'Members'   , 'MemberOuts' , 'MemberOuts' , 'SectionProp' ,'LineTypes'  ,'ConnectionProp' ,'LineProp' ]
-        NUMTAB_FROM_LAB_NHEADER  = [2         , 2           , 2              , 2           , 2            , 2            , 2             , 2           , 2               , 2         ]
-        NUMTAB_FROM_LAB_NOFFSET  = [0         , 0           , 0              , 0           , 0            , 0            , 0             , 0           , 0               , 0         ]
-        NUMTAB_FROM_LAB_TYPE     = ['num'     , 'num'       , 'num'          , 'mix'       , 'num'        , 'sdout'      , 'num'         ,'mix'        ,'mix'            ,'mix'      ]
+        NUMTAB_FROM_LAB_DIM_VAR  = ['NumAlf'  , 'NKInpSt'   , 'NCoefMembers' , 'NMembers'  , 'NMOutputs'  , 'NMOutputs'  , 'NPropSets'   ,'NConnects'      ]
+        NUMTAB_FROM_LAB_VARNAME  = ['AFCoeff' , 'TMDspProp' , 'MemberProp'   , 'Members'   , 'MemberOuts' , 'MemberOuts' , 'SectionProp' ,'ConnectionProp' ]
+        NUMTAB_FROM_LAB_DETECT   = ['NumAlf'  , 'F_X'       , 'MemberCd1'    , 'MJointID1' , 'NOutLoc'    , 'NOutCnt'    , 'PropD'       ,'Type'           ]
+        NUMTAB_FROM_LAB_NHEADER  = [2         , 2           , 2              , 2           , 2            , 2            , 2             , 2               ]
+        NUMTAB_FROM_LAB_NOFFSET  = [0         , 0           , 0              , 0           , 0            , 0            , 0             , 0               ]
+        NUMTAB_FROM_LAB_TYPE     = ['num'     , 'num'       , 'num'          , 'mix'       , 'num'        , 'sdout'      , 'num'         ,'mix'            ]
+        
+        # NUMTAB_FROM_LAB_DIM_VAR  = ['NumAlf'  , 'NKInpSt'   , 'NCoefMembers' , 'NMembers'  , 'NMOutputs'  , 'NMOutputs'  , 'NPropSets'   ,'NTypes'     ,'NConnects'      ,'NLines'   ]
+        # NUMTAB_FROM_LAB_VARNAME  = ['AFCoeff' , 'TMDspProp' , 'MemberProp'   , 'Members'   , 'MemberOuts' , 'MemberOuts' , 'SectionProp' ,'LineTypes'  ,'ConnectionProp' ,'LineProp' ]
+        # NUMTAB_FROM_LAB_DETECT   = ['NumAlf'  , 'F_X'       , 'MemberCd1'    , 'MJointID1' , 'NOutLoc'    , 'NOutCnt'    , 'PropD'       ,'Diam'       ,'Type'           ,'LineType' ]
+        # NUMTAB_FROM_LAB_NHEADER  = [2         , 2           , 2              , 2           , 2            , 2            , 2             , 2           , 2               , 2         ]
+        # NUMTAB_FROM_LAB_NOFFSET  = [0         , 0           , 0              , 0           , 0            , 0            , 0             , 0           , 0               , 0         ]
+        # NUMTAB_FROM_LAB_TYPE     = ['num'     , 'num'       , 'num'          , 'mix'       , 'num'        , 'sdout'      , 'num'         ,'mix'        ,'mix'            ,'mix'      ]
+        # MoorDyn
+        NUMTAB_FROM_LAB_DETECT   += ['Diam'             , 'LineType'    , 'Attachment'      ]
+        NUMTAB_FROM_LAB_DIM_VAR  += [1                  , 6             ,  9                ]
+        NUMTAB_FROM_LAB_VARNAME  += ['LineTypes'        , 'LineProp'    , 'ConnectionProp'  ]
+        NUMTAB_FROM_LAB_NHEADER  += [1                  , 1             , 1                 ]
+        NUMTAB_FROM_LAB_NOFFSET  += [1                  , 1             , 1                 ]
+        NUMTAB_FROM_LAB_TYPE     += ['mix'              , 'mix'         , 'mix'             ]
         # SubDyn
         NUMTAB_FROM_LAB_DETECT   += ['GuyanDampSize'     , 'YoungE'   , 'YoungE'    , 'EA'             , 'MatDens'       ]
         NUMTAB_FROM_LAB_DIM_VAR  += [6                   , 'NPropSets', 'NXPropSets', 'NCablePropSets' , 'NRigidPropSets']
