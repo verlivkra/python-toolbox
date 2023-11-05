@@ -484,9 +484,9 @@ class FFCaseCreation:
         print(f'         If the values above are okay, you can safely ignore this warning.\n')
 
         self.dt_high_les = amr.dt_high_les
-        self.ds_high_les = amr.dt_high_les
+        self.ds_high_les = amr.ds_high_les
         self.dt_low_les  = amr.dt_low_les
-        self.ds_low_les  = amr.dt_low_les
+        self.ds_low_les  = amr.ds_low_les
 
 
 
@@ -1046,11 +1046,11 @@ class FFCaseCreation:
         else:
             self.sweepEDmodel = True
             self.sweepADmodel = True
-
         # Initialize an empty array to accumulate individual cases
         allCases = []
         # Get list of unique yaws, keeping the order
         _, ind = np.unique(self.yaw_init, axis=0, return_index=True)
+        
         yaw_unique = self.yaw_init[np.sort(ind)] # duplicates removed, same order as original array
 
         # The main sweep on wind dir and yaw has been given by the user, such that
